@@ -1,0 +1,13 @@
+main {
+  font-family: "Cabin", sans-serif;
+  background-image: url("https://cdn.pixabay.com/photo/2022/11/01/05/18/coffee-7561288_1280.jpg");
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+/* Contenido por encima del overlay */
+.content {
+  position: relative;
+  z-index: 10;
+}
