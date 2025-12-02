@@ -3,7 +3,7 @@ import { Notivue, Notification } from "notivue";
 </script>
 <template>
   <NuxtLayout>
-    <NuxtPage :key="$route.fullPath" />
+    <NuxtPage />
   </NuxtLayout>
   <Notivue v-slot="item">
     <Notification :item="item" />
