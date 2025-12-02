@@ -161,120 +161,123 @@
       </div>
 
       <div
-        class="hidden lg:block lg:col-span-1 bg-white border-l border-gray-100 shadow-xl p-6 flex flex-col cart-sidebar no-scrollbar"
+  class="hidden lg:block lg:col-span-1 bg-white border-l border-gray-100 shadow-xl p-6 flex flex-col cart-sidebar"
+>
+  <h2
+    class="text-2xl font-bold text-primary border-b pb-2 mb-4 text-center"
+  >
+    <i class="fas fa-shopping-cart mr-2 text-secondary"></i> TU PEDIDO
+  </h2>
+
+  <!-- Contenedor con scroll -->
+  <div
+    class="flex-grow overflow-y-auto mb-6 space-y-2 max-h-64"
+  >
+    <ul id="cart-items">
+      <li
+        v-if="order.length == 0"
+        class="p-4 text-center text-gray-500 italic"
       >
-        <h2
-          class="text-2xl font-bold text-primary border-b pb-2 mb-4 text-center"
-        >
-          <i class="fas fa-shopping-cart mr-2 text-secondary"></i> TU PEDIDO
-        </h2>
-        <div
-          class="flex-grow overflow-y-auto mb-6 space-y-2 max-h-64 no-scrollbar"
-        >
-          <ul id="cart-items">
-            <li
-              v-if="order.length == 0"
-              class="p-4 text-center text-gray-500 italic"
-            >
-              El carrito está vacío.
-            </li>
-            <li
-              v-for="item in order"
-              :key="item.id"
-              class="flex justify-between items-center py-2 border-b border-gray-100"
-            >
-              <div class="flex-grow">
-                <p class="text-sm font-semibold text-text-dark">
-                  {{ item.name }}
-                </p>
-                <p class="text-xs text-gray-500">
-                  {{ item.quantity }} x {{ formatCOP(item.price) }}
-                </p>
-              </div>
-              <span class="font-bold text-secondary">{{
-                formatCOP(item.price * item.quantity)
-              }}</span>
-              <button
-                class="text-red-500 hover:text-red-700 ml-4"
-                @click="eliminarProducto(item.id)"
-              >
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </li>
-          </ul>
-          <div class="flex justify-end pt-4">
-            <div class="w-full max-w-xs space-y-4 text-right">
-              <div class="flex justify-between border-t border-gray-200 pt-2">
-                <span class="font-semibold">Subtotal Neto:</span>
-                <span id="subtotal-base" class="font-medium">{{
-                  formatCOP(subtotalNeto)
-                }}</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="font-semibold">IVA:</span>
-                <span id="iva-amount" class="font-medium">{{
-                  formatCOP(ivaMonto)
-                }}</span>
-              </div>
-            </div>
-          </div>
+        El carrito está vacío.
+      </li>
+      <li
+        v-for="item in order"
+        :key="item.id"
+        class="flex justify-between items-center py-2 border-b border-gray-100"
+      >
+        <div class="flex-grow">
+          <p class="text-sm font-semibold text-text-dark">
+            {{ item.name }}
+          </p>
+          <p class="text-xs text-gray-500">
+            {{ item.quantity }} x {{ formatCOP(item.price) }}
+          </p>
         </div>
-        <div v-if="order.length > 0">
-          <div class="mb-2">
-            <label
-              for="client-name"
-              class="block text-sm font-medium text-gray-700"
-              >Cliente</label
-            >
-            <input
-              type="text"
-              id="client-name"
-              v-model="customenrName"
-              placeholder="Nombre del cliente"
-              class="mt-1 block w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:ring-secondary focus:border-secondary"
-            />
-          </div>
-          <div class="mb-2">
-            <label for="dicount" class="block text-sm font-medium text-gray-700"
-              >Decuento ($):</label
-            >
-            <input
-              type="number"
-              id="dicount"
-              v-model="discount"
-              min="0"
-              max="10"
-              class="mt-1 block w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:ring-secondary focus:border-secondary"
-            />
-          </div>
+        <span class="font-bold text-secondary">
+          {{ formatCOP(item.price * item.quantity) }}
+        </span>
+        <button
+          class="text-red-500 hover:text-red-700 ml-4"
+          @click="eliminarProducto(item.id)"
+        >
+          <i class="fas fa-trash-alt"></i>
+        </button>
+      </li>
+    </ul>
+
+    <div class="flex justify-end pt-4">
+      <div class="w-full max-w-xs space-y-4 text-right">
+        <div class="flex justify-between border-t border-gray-200 pt-2">
+          <span class="font-semibold">Subtotal Neto:</span>
+          <span id="subtotal-base" class="font-medium">
+            {{ formatCOP(subtotalNeto) }}
+          </span>
         </div>
-        <div class="mt-auto border-t border-gray-200">
-          <div
-            class="flex justify-between items-center mb-4 text-lg font-semibold"
-          >
-            <span>Total:</span>
-            <span id="cart-total" class="text-2xl font-bold text-secondary">{{
-              formatCOP(totalFinalConDescuento)
-            }}</span>
-          </div>
-
-          <button
-            v-if="order.length === 0"
-            :disabled="order.length === 0"
-            class="w-full bg-gray-400 text-white py-3 rounded-lg text-lg font-bold shadow-lg hover:cursor-not-allowed"
-          >
-            <i class="fas fa-check mr-2"></i> Confirmar Pedido
-          </button>
-
-          <button
-            v-else
-            class="w-full bg-secondary text-white py-3 rounded-lg text-lg font-bold hover:bg-primary transition duration-200 shadow-lg"
-            @click="submitOrder"
-          >
-            <i class="fas fa-check mr-2"></i> Confirmar Pedido
-          </button>
+        <div class="flex justify-between">
+          <span class="font-semibold">IVA:</span>
+          <span id="iva-amount" class="font-medium">
+            {{ formatCOP(ivaMonto) }}
+          </span>
         </div>
       </div>
+    </div>
+  </div>
+
+  <div v-if="order.length > 0">
+    <div class="mb-2">
+      <label
+        for="client-name"
+        class="block text-sm font-medium text-gray-700"
+      >Cliente</label>
+      <input
+        type="text"
+        id="client-name"
+        v-model="customenrName"
+        placeholder="Nombre del cliente"
+        class="mt-1 block w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:ring-secondary focus:border-secondary"
+      />
+    </div>
+    <div class="mb-2">
+      <label for="dicount" class="block text-sm font-medium text-gray-700"
+        >Decuento ($):</label>
+      <input
+        type="number"
+        id="dicount"
+        v-model="discount"
+        min="0"
+        max="10"
+        class="mt-1 block w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:ring-secondary focus:border-secondary"
+      />
+    </div>
+  </div>
+
+  <div class="mt-auto border-t border-gray-200">
+    <div
+      class="flex justify-between items-center mb-4 text-lg font-semibold"
+    >
+      <span>Total:</span>
+      <span id="cart-total" class="text-2xl font-bold text-secondary">
+        {{ formatCOP(totalFinalConDescuento) }}
+      </span>
+    </div>
+
+    <button
+      v-if="order.length === 0"
+      :disabled="order.length === 0"
+      class="w-full bg-gray-400 text-white py-3 rounded-lg text-lg font-bold shadow-lg hover:cursor-not-allowed"
+    >
+      <i class="fas fa-check mr-2"></i> Confirmar Pedido
+    </button>
+
+    <button
+      v-else
+      class="w-full bg-secondary text-white py-3 rounded-lg text-lg font-bold hover:bg-primary transition duration-200 shadow-lg"
+      @click="submitOrder"
+    >
+      <i class="fas fa-check mr-2"></i> Confirmar Pedido
+    </button>
+  </div>
+</div>
     </div>
 
     <div
