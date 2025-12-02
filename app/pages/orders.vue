@@ -297,6 +297,11 @@ const eliminarOrden = async (id) => {
     push.success({ title: "Operación exitosa", message: data.data.message });
     getOrdersList(URL_BASE_API + "/api/v1/orders?page=1&limit=10");
   } catch (error) {
+    if (err.message.includes("401")) {
+      push.warning({ title: "Sesión expirada", message: "Por favor inicie sesión de nuevo.", timeout: 8000 });
+      localStorage.clear();
+      return navigateTo({ path: "/auth" });
+    }
     push.error({ title: "Error", message: error.error, timeout: 8000 });
     console.log(data.data);
   }
@@ -315,6 +320,11 @@ const logOut = async () => {
     localStorage.clear();
     return navigateTo({ path: "/" });
   } catch (err) {
+    if (err.message.includes("401")) {
+      push.warning({ title: "Sesión expirada", message: "Por favor inicie sesión de nuevo.", timeout: 8000 });
+      localStorage.clear();
+      return navigateTo({ path: "/auth" });
+    }
     push.error({ title: "Error", message: err.message, timeout: 8000 });
   } finally {
     loading.value = false;

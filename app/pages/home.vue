@@ -3,7 +3,7 @@
     <header
       class="sticky-header bg-primary text-white h-12 flex items-center justify-between px-4 lg:px-8"
     >
-    <loading-component v-if="loading" />
+      <loading-component v-if="loading" />
       <div class="flex items-center space-x-2">
         <i class="fas fa-mug-hot text-xl text-secondary"></i>
         <span class="text-2xl font-bold tracking-wider">CAFÉ ORDEN</span>
@@ -259,8 +259,8 @@
           </div>
 
           <button
-            v-if="order.length===0"
-            :disabled="order.length===0"
+            v-if="order.length === 0"
+            :disabled="order.length === 0"
             class="w-full bg-gray-400 text-white py-3 rounded-lg text-lg font-bold shadow-lg hover:cursor-not-allowed"
           >
             <i class="fas fa-check mr-2"></i> Confirmar Pedido
@@ -366,7 +366,7 @@ definePageMeta({
   middleware: "auth",
 });
 import "~/assets/css/home.css";
-import { ref, computed, onMounted, watch,toRaw } from "vue";
+import { ref, computed, onMounted, watch, toRaw } from "vue";
 import axios from "axios";
 import { push } from "notivue";
 import path from "path";
@@ -409,9 +409,12 @@ const getProductList = async (url) => {
 };
 
 const submitOrder = async () => {
-  if(!customenrName.value){
-    push.warning({title: "Campos imcompletos", message: "Debe diligencias todos los campos del pedido" })
-    return
+  if (!customenrName.value) {
+    push.warning({
+      title: "Campos imcompletos",
+      message: "Debe diligencias todos los campos del pedido",
+    });
+    return;
   }
   loading.value = true;
   error.value = "";
@@ -423,21 +426,34 @@ const submitOrder = async () => {
       mesa: "M-2",
       details: order.value,
       discount: discount.value,
-      total: totalFinalConDescuento.value
-    }
-    const { data } = await axios.post(URL_BASE_API+"/api/v1/orders", body, 
-      {headers: {
+      total: totalFinalConDescuento.value,
+    };
+    const { data } = await axios.post(URL_BASE_API + "/api/v1/orders", body, {
+      headers: {
         Authorization: `${token.value.token_type} ${token.value.token}`,
-      }}
-    );
+      },
+    });
 
-    localStorage.removeItem(STORAGE_KEY_ORDER)
-    order.value = []
-    push.success({ title:data.message, message: " Su orden fue procesada con exitos...",  timeout: 8000 })
-    const orderId = data.data?.id
+    localStorage.removeItem(STORAGE_KEY_ORDER);
+    order.value = [];
+    push.success({
+      title: data.message,
+      message: " Su orden fue procesada con exitos...",
+      timeout: 8000,
+    });
+    const orderId = data.data?.id;
     // route.push({path:"/order/"+orderId})
-    window.open(`/order/${data.data?.id}`, '_blank')
+    window.open(`/order/${data.data?.id}`, "_blank");
   } catch (err) {
+    if (err.message.includes("401")) {
+      push.warning({
+        title: "Sesión expirada",
+        message: "Por favor inicie sesión de nuevo.",
+        timeout: 8000,
+      });
+      localStorage.clear();
+      return navigateTo({ path: "/auth" });
+    }
     push.error({ title: "Error", message: err.message, timeout: 8000 });
   } finally {
     loading.value = false;
@@ -457,6 +473,15 @@ const logOut = async () => {
     localStorage.clear();
     return navigateTo({ path: "/" });
   } catch (err) {
+    if (err.message.includes("401")) {
+      push.warning({
+        title: "Sesión expirada",
+        message: "Por favor inicie sesión de nuevo.",
+        timeout: 8000,
+      });
+      localStorage.clear();
+      return navigateTo({ path: "/auth" });
+    }
     push.error({ title: "Error", message: err.message, timeout: 8000 });
   } finally {
     loading.value = false;
@@ -491,7 +516,7 @@ onMounted(() => {
 
   const storedOrder = localStorage.getItem(STORAGE_KEY_ORDER);
   if (storedOrder) {
-      order.value = (JSON.parse(storedOrder) || [])
+    order.value = JSON.parse(storedOrder) || [];
   }
 });
 
@@ -531,10 +556,14 @@ watch(inputSearch, (nuevoValor) => {
 //PEDIDO
 const order = ref([]);
 
-watch(order, (newOrder) => {
-  localStorage.setItem(STORAGE_KEY_ORDER, JSON.stringify(toRaw(newOrder)));
-  if (newOrder.length === 0) discount.value = null
-}, { deep: true});
+watch(
+  order,
+  (newOrder) => {
+    localStorage.setItem(STORAGE_KEY_ORDER, JSON.stringify(toRaw(newOrder)));
+    if (newOrder.length === 0) discount.value = null;
+  },
+  { deep: true }
+);
 
 const formatCOP = (price) => {
   const numericPrice = isNaN(price) ? 0 : price;
@@ -571,7 +600,7 @@ const ivaMonto = computed(() => {
 
 // El Total Final es el subtotal bruto (que ya incluye el IVA por nuestro cálculo)
 const totalFinal = computed(() => {
-  return subtotalBruto.value 
+  return subtotalBruto.value;
 });
 
 const totalFinalConDescuento = computed(() => {

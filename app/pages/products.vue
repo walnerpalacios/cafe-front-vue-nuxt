@@ -510,6 +510,11 @@ const guardarProducto = async () => {
     console.log(data.data);
     getProductList(URL_BASE_API + "/api/v1/public/products?page=1&limit=10");
   } catch (error) {
+    if (err.message.includes("401")) {
+      push.warning({ title: "Sesión expirada", message: "Por favor inicie sesión de nuevo.", timeout: 8000 });
+      localStorage.clear();
+      return navigateTo({ path: "/auth" });
+    }
     push.error({ title: "Error", message: error.error, timeout: 8000 });
   }
 };
@@ -548,6 +553,11 @@ const actualizarProducto = async () => {
     push.success({ title: "Operación exitosa", message: data.data.message });
     getProductList(URL_BASE_API + "/api/v1/public/products?page=1&limit=10");
   } catch (error) {
+    if (err.message.includes("401")) {
+      push.warning({ title: "Sesión expirada", message: "Por favor inicie sesión de nuevo.", timeout: 8000 });
+      localStorage.clear();
+      return navigateTo({ path: "/auth" });
+    }
     push.error({ title: "Error", message: error.error, timeout: 8000 });
     console.log(data.data);
   }
@@ -586,6 +596,11 @@ const eliminarProducto = async (id) => {
     push.success({ title: "Operación exitosa", message: data.data.message });
     getProductList(URL_BASE_API + "/api/v1/public/products?page=1&limit=10");
   } catch (error) {
+    if (err.message.includes("401")) {
+      push.warning({ title: "Sesión expirada", message: "Por favor inicie sesión de nuevo.", timeout: 8000 });
+      localStorage.clear();
+      return navigateTo({ path: "/auth" });
+    }
     push.error({ title: "Error", message: error.error, timeout: 8000 });
     console.log(data.data);
   }
@@ -642,37 +657,6 @@ const formatCOP = (price) => {
   }).format(numericPrice);
 };
 
-// Calcula el subtotal (Base Imponible)
-const subtotalBruto = computed(() => {
-  return order.value.reduce((sum, item) => {
-    // Asumimos que 'item.price' es el precio FINAL (con impuestos incluidos)
-    return sum + item.price * item.quantity;
-  }, 0);
-});
 
-const agregarProducto = (productoNuevo) => {
-  const cantidadModal = modalQuantity.value;
 
-  const itemExistente = order.value.find(
-    (item) => item.id === productoNuevo.id
-  );
-
-  if (itemExistente) {
-    itemExistente.quantity += cantidadModal;
-  } else {
-    order.value.push({
-      ...productoNuevo,
-      quantity: cantidadModal,
-    });
-  }
-  modalQuantity.value = 1;
-  product.value = null;
-};
-
-// const eliminarProducto = (productoId) => {
-//   const index = order.value.findIndex((item) => item.id === productoId);
-//   if (index !== -1) {
-//     order.value.splice(index, 1);
-//   }
-// };
 </script>
