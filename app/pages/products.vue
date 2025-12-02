@@ -252,7 +252,7 @@
         <div class="bg-white rounded-xl w-full max-w-4xl shadow-2xl p-6">
           <div class="flex justify-between items-center border-b pb-3 mb-4">
             <h2 id="modal-title" class="text-2xl font-bold text-primary">
-              {{ formData?.id > 0 ? "Editar" : "Crear" }} Producto
+              {{ formData?.id <= 0 ? "Crear" : "Actualizar" }} Producto
             </h2>
             <button
               @click="formData = { imageUrl: '', id: -1 }"
@@ -264,7 +264,7 @@
 
           <form
             @submit.prevent="
-              formData.value?.id > 0 ? guardarProducto() : actualizarProducto()
+              formData?.id <= 0 ? guardarProducto() : actualizarProducto()
             "
             id="product-form"
             class="space-y-4"
@@ -413,7 +413,7 @@
               id="submit-button"
               class="w-full bg-secondary text-white py-3 mt-4 rounded-lg text-lg font-bold hover:bg-primary transition duration-300"
             >
-              {{ formData.value?.id > 0 ? "Crear" : "Actualiza" }} Producto
+              {{ formData?.id <= 0 ? "Crear" : "Actualiza" }} Producto
             </button>
           </form>
         </div>
